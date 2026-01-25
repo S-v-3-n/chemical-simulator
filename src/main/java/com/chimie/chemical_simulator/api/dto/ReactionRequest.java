@@ -5,7 +5,15 @@ import java.util.Map;
 public class ReactionRequest {
 
     private String equation;
-    private Map<String, Double> reactantAmounts;
+    private Map<String, Integer> reactantAmounts; // H, O, C, etc.
+
+    public ReactionRequest() {
+    }
+
+    public ReactionRequest(String equation, Map<String, Integer> reactantAmounts) {
+        this.equation = equation;
+        this.reactantAmounts = reactantAmounts;
+    }
 
     public String getEquation() {
         return equation;
@@ -15,11 +23,11 @@ public class ReactionRequest {
         this.equation = equation;
     }
 
-    public Map<String, Double> getReactantAmounts() {
+    public Map<String, Integer> getReactantAmounts() {
         return reactantAmounts;
     }
 
-    public void setReactantAmounts(Map<String, Double> reactantAmounts) {
+    public void setReactantAmounts(Map<String, Integer> reactantAmounts) {
         this.reactantAmounts = reactantAmounts;
     }
 }

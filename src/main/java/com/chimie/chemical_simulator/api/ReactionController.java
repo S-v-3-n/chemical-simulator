@@ -1,5 +1,6 @@
 package com.chimie.chemical_simulator.api;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,6 +10,7 @@ import com.chimie.chemical_simulator.api.dto.ReactionRequest;
 import com.chimie.chemical_simulator.api.dto.SimulationResult;
 import com.chimie.chemical_simulator.service.ReactionService;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/reactions")
 public class ReactionController {

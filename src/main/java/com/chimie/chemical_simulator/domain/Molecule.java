@@ -13,9 +13,4 @@ public class Molecule {
     public Map<String, Integer> getAtoms() {
         return atoms;
     }
-
-    @Override
-    public String toString() {
-        return atoms.toString();
-    }
 }

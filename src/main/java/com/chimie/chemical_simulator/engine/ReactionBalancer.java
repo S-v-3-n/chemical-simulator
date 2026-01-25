@@ -1,9 +1,8 @@
 package com.chimie.chemical_simulator.engine;
 
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
@@ -12,47 +11,37 @@ import com.chimie.chemical_simulator.domain.Molecule;
 @Component
 public class ReactionBalancer {
 
-    public BalancedReaction balance(
-        String r1, Molecule m1,
-        String r2, Molecule m2,
-        String p, Molecule mp) {
+    /**
+     * Produit autant de molécules complètes que possible en fonction
+     * des atomes disponibles, pour n'importe quels éléments chimiques.
+     */
+    public Map<String, Integer> produceFromAtoms(Map<String, Integer> availableAtoms, List<Molecule> products) {
+        Map<String, Integer> result = new HashMap<>();
 
-        // Créer un set mutable des éléments
-        Set<String> elements = new HashSet<>(m1.getAtoms().keySet());
-        elements.addAll(m2.getAtoms().keySet());
+        for (Molecule p : products) {
+            int maxMolecules = Integer.MAX_VALUE;
 
-        int a = 1, b = 1, c = 1;
+            for (Map.Entry<String, Integer> entry : p.getAtoms().entrySet()) {
+                String element = entry.getKey();
+                int countNeeded = entry.getValue();
+                int available = availableAtoms.getOrDefault(element, 0);
 
-        outer:
-        for (a = 1; a <= 10; a++) {
-            for (b = 1; b <= 10; b++) {
-                for (c = 1; c <= 10; c++) {
+                // combien de molécules complètes peut-on faire avec cet élément
+                maxMolecules = Math.min(maxMolecules, available / countNeeded);
+            }
 
-                    boolean ok = true;
+            if (maxMolecules > 0) {
+                result.put(p.getFormula(), maxMolecules);
 
-                    for (String e : elements) {
-                        int left = a * m1.getAtoms().getOrDefault(e, 0)
-                                + b * m2.getAtoms().getOrDefault(e, 0);
-                        int right = c * mp.getAtoms().getOrDefault(e, 0);
-
-                        if (left != right) {
-                            ok = false;
-                            break;
-                        }
-                    }
-
-                    if (ok) break outer;
+                // retirer les atomes utilisés
+                for (Map.Entry<String, Integer> entry : p.getAtoms().entrySet()) {
+                    String element = entry.getKey();
+                    int used = entry.getValue() * maxMolecules;
+                    availableAtoms.put(element, availableAtoms.get(element) - used);
                 }
             }
         }
 
-        Map<String, Integer> reactants = new HashMap<>();
-        reactants.put(r1, a);
-        reactants.put(r2, b);
-
-        Map<String, Integer> products = new HashMap<>();
-        products.put(p, c);
-
-        return new BalancedReaction(reactants, products);
+        return result;
     }
 }
